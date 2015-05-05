@@ -1,0 +1,63 @@
+import urllib2
+import json
+resultlist=[]
+
+u1='http://gdata.youtube.com/feeds/users/'
+u3='/uploads?alt=json'
+
+urlargs={}
+
+channel='shenryyr2'
+
+if numvids <=50:
+	urlargs['max-items'] = numvids
+	downvids()
+
+if numvids >50:
+	urlargs['start-index'] = 1
+	while numvids>0:
+		urlargs['max-items'] = (50 if numvids > 50 else numvids)
+		downvids()
+		urlargs['start-index'] = urlargs['start-index'] + urlargs['max-items']
+		numvids-=50
+
+		pass
+
+def downvids():
+	basisurl=''.join((u1,channel,u3))
+	argstring=''
+	for key,value in urlargs.items():
+		argstring+=''.join(('&',key,'=',str(value)))
+	url=basisurl+argstring
+
+	response= urllib.urlopen(url)
+
+	data=response.read().decode('utf-8')
+	j=json.loads(data)
+
+	for i in range(len(j["feed"]["entry"])):
+		resultlist.append((j["feed"]["entry"][i]["media$group"]["media$title"]["$t"],
+		j["feed"]["entry"][i]["media$group"]['yt$duration']['seconds'],
+		j["feed"]["entry"][i]['id']['$t']))
+
+
+
+# apiArgs=[]
+
+
+
+# url='http://gdata.youtube.com/feeds/users/shenryyr2/uploads?alt=json'
+
+
+
+# response= urllib.urlopen(url)
+
+# data=response.read().decode('utf-8')
+# j=json.loads(data)
+
+
+
+# for i in range(len(j["feed"]["entry"])):
+#     resultlist.append((j["feed"]["entry"][i]["media$group"]["media$title"]["$t"],
+#     j["feed"]["entry"][i]["media$group"]['yt$duration']['seconds'],
+#     j["feed"]["entry"][i]['id']['$t']))
